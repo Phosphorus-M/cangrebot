@@ -14,10 +14,8 @@ static LANGUAGE_ALIASES: &[(&str, &str)] = &[
     ("objc", "objective-c"),
     ("kt", "kotlin"),
     ("cs", "csharp"),
-    ("py", "python3"),
-    ("python", "python3"),
-    ("py2", "python"),
-    ("python2", "python"),
+    ("py", "python"),
+    ("py3", "python3"),
     ("js", "javascript"),
     ("coffee", "coffeescript"),
     ("fs", "fsharp"),
@@ -167,9 +165,6 @@ pub async fn compile(ctx: &Context, msg: &Message) -> CommandResult {
 
     if language == "rust" {
         msg.react(ctx, ReactionType::Unicode("🦀".to_string())).await.unwrap();
-        if !code_block.contains("fn main") {
-            code_block = format!("fn main() {{\n{}\n}}", code_block);
-        }
     }
 
     if !LANGUAGES.contains(&&*language) {
@@ -177,6 +172,9 @@ pub async fn compile(ctx: &Context, msg: &Message) -> CommandResult {
             "{INVALID_LANGUAGE} {}",
             LANGUAGES.join(", ")
         )).await?;
+        if !code_block.contains("fn main") {
+            code_block = format!("fn main() {\n{code_block}\n}");
+        }
         return Ok(());
     }
 
